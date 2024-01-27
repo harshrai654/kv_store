@@ -1,0 +1,148 @@
+swagger: "2.0"
+info:
+  title: Key Value Store API
+  version: "1.0"
+paths:
+  /kv:
+    get:
+      summary: Retrieves the value associated with a given key.
+      parameters:
+        - name: key
+          in: query
+          description: The key for which to retrieve the value.
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Successful response with the retrieved value.
+          schema:
+            type: string
+        "400":
+          description: Bad Request. The key parameter is required.
+        "404":
+          description: Not Found. The specified key was not found.
+    post:
+      summary: Inserts or updates a key-value pair in the 'kv' table based on the provided request body.
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+      parameters:
+        - name: requestBody
+          in: body
+          description: The request body containing the key, value, and optional expiration duration.
+          required: true
+          schema:
+            $ref: "#/definitions/requestBodyUpsertKey"
+      responses:
+        "200":
+          description: Successful response with the inserted or updated key-value pair.
+          schema:
+            type: string
+        "204":
+          description: No Content. Nothing to modify.
+        "400":
+          description: Bad Request. Failed to parse JSON request body.
+        "500":
+          description: Internal Server Error. Failed to insert or update key.
+    put:
+      summary: Updates the value associated with a given key.
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+      parameters:
+        - name: requestBody
+          in: body
+          description: The request body containing the key and value to update.
+          required: true
+          schema:
+            $ref: "#/definitions/requestBodyUpdateKey"
+      responses:
+        "200":
+          description: Successful response with the updated key-value pair.
+          schema:
+            type: string
+        "204":
+          description: No Content. Nothing to modify.
+        "400":
+          description: Bad Request. Failed to parse JSON request body.
+        "404":
+          description: Not Found. The specified key was not found.
+        "500":
+          description: Internal Server Error. Failed to update/insert key.
+    delete:
+      summary: Marks a key as deleted in the 'kv' table based on the provided key parameter.
+      produces:
+        - application/json
+      parameters:
+        - name: key
+          in: query
+          description: The key to be marked as deleted.
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Successful response with a message indicating the key deletion status.
+          schema:
+            type: string
+        "400":
+          description: Bad Request. The key parameter is required.
+        "500":
+          description: Internal Server Error. Failed to delete key.
+  /kv/ttl:
+    put:
+      summary: Updates the time-to-live (TTL) for a key in the 'kv' table based on the provided request body.
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+      parameters:
+        - name: requestBody
+          in: body
+          description: The request body containing the key and optional expiration duration.
+          required: true
+          schema:
+            $ref: "#/definitions/requestBodyTTLUpdate"
+      responses:
+        "200":
+          description: Successful response with the updated TTL information.
+          schema:
+            type: string
+        "400":
+          description: Bad Request. Failed to parse JSON request body or invalid expireIn value.
+        "500":
+          description: Internal Server Error. Failed to update TTL for the key.
+definitions:
+  requestBodyUpsertKey:
+    type: object
+    required:
+      - key
+      - value
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+      expireIn:
+        type: integer
+  requestBodyUpdateKey:
+    type: object
+    required:
+      - key
+      - value
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+  requestBodyTTLUpdate:
+    type: object
+    required:
+      - key
+      - expireIn
+    properties:
+      key:
+        type: string
+      expireIn:
+        type: integer
