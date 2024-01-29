@@ -23,10 +23,10 @@ func init() {
 		log.Fatal("Error loading .env file")
 	}
 	
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
+	dbUser := os.Getenv("MYSQL_USER")
+	dbPassword := os.Getenv("MYSQL_PASSWORD")
 	dbHost := os.Getenv("DB_HOST")
-	dbName := os.Getenv("DB_NAME")
+	dbName := os.Getenv("MYSQL_DATABASE")
 	dbPort := os.Getenv("DB_PORT")
 
 	maxOpenConnections, err := strconv.Atoi(os.Getenv("DB_MAX_OPEN_CONN"))
